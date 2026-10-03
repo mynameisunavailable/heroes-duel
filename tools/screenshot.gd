@@ -7,14 +7,17 @@ extends SceneTree
 ##   --out      output directory, relative to the project (default build)
 ##   --drag     skill slot to press and drag, to capture the aim indicator
 ##   --drag-to  "x,y" in viewport pixels to drag towards (default the arena centre)
+##   --keys     physical keys to hold down, e.g. --keys=D,J, to check the bindings work
 
 var _capture_at := PackedInt32Array([140, 420])
 var _out_dir := "build"
 var _drag_slot := -1
 var _drag_to := Vector2(560.0, 300.0)
+var _hold_keys: Array[int] = []
 var _frame := 0
 var _taken := 0
 var _drag_started := false
+var _keys_held := false
 var _touch_index := 7
 
 
@@ -32,12 +35,20 @@ func _initialize() -> void:
 			var parts := arg.trim_prefix("--drag-to=").split(",", false)
 			if parts.size() == 2:
 				_drag_to = Vector2(parts[0].to_float(), parts[1].to_float())
+		elif arg.begins_with("--keys="):
+			for name in arg.trim_prefix("--keys=").split(",", false):
+				var keycode := OS.find_keycode_from_string(name.strip_edges())
+				if keycode != KEY_NONE:
+					_hold_keys.append(keycode)
+				else:
+					printerr("Unknown key: %s" % name)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://%s" % _out_dir))
 	change_scene_to_file("res://scenes/arena/arena.tscn")
 
 
 func _process(_delta: float) -> bool:
 	_frame += 1
+	_hold_down_keys()
 	_drive_drag()
 	if not _capture_at.has(_frame):
 		return false
@@ -50,6 +61,21 @@ func _process(_delta: float) -> bool:
 	print("saved %s (%dx%d)" % [path, image.get_width(), image.get_height()])
 	_taken += 1
 	return _taken >= _capture_at.size()
+
+
+## Presses the requested keys once, shortly before the first capture, and never releases
+## them, so the capture shows what holding them does.
+func _hold_down_keys() -> void:
+	if _keys_held or _hold_keys.is_empty() or _capture_at.is_empty():
+		return
+	if _frame < _capture_at[0] - 30:
+		return
+	_keys_held = true
+	for keycode in _hold_keys:
+		var event := InputEventKey.new()
+		event.physical_keycode = keycode as Key
+		event.pressed = true
+		Input.parse_input_event(event)
 
 
 ## Presses the requested skill button a few frames before the first capture and holds a
