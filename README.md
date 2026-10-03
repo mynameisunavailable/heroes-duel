@@ -5,10 +5,16 @@ See [docs/PLAN.md](docs/PLAN.md) for the design, milestones and iOS shipping pla
 
 ## Run
 
-1. Install Godot 4.7.2 (standard build). This repo expects it at
-   `..\tools\godot\4.7.2\`, or set the `GODOT` environment variable.
-2. Open `project.godot` in Godot and press F5. The game boots straight into
-   Knight (you) vs Ranger (AI).
+```bash
+powershell -ExecutionPolicy Bypass -File tools/run.ps1
+```
+
+The game boots straight into Knight (you) vs Ranger (AI). Close the window, or press
+Esc and then Quit, to stop.
+
+The launcher looks for Godot 4.7.2 (standard, non-.NET build) at `..\tools\godot\4.7.2\`
+beside this repository, or wherever the `GODOT` environment variable points. You can
+also open `project.godot` in the Godot editor and press F5.
 
 Controls on desktop: WASD/arrows to move (or drag with the mouse in the left part of the
 screen), J/Space to attack, K/L/; to quick-cast skills, Q/E/R to cast at the mouse
