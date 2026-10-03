@@ -66,6 +66,20 @@ godot --headless --path . -s res://tools/ai_batch.gd -- --matches=20
 Plays AI-vs-AI matches and reports win rates, round lengths and damage. See
 "Measured balance" in [docs/PLAN.md](docs/PLAN.md) for the current readings.
 
+## Build a standalone executable
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools/build.ps1
+```
+
+Produces `build/windows/HeroesDuel.exe`: one file, about 110 MB, with the game data
+packed inside. It needs no Godot install, so it can be copied or sent to someone else as
+it is. `-Target web` builds the browser version instead, `-Target all` builds both, and
+`-Debug` makes a build that prints errors.
+
+Exporting needs Godot's export templates, which are a separate ~1.3 GB download
+(Editor > Manage Export Templates, or the `.tpz` from the Godot release page).
+
 ## Changing the pictures
 
 Drop an image into `art/heroes/`, `art/skills/` or `art/arena/`, named after the thing
