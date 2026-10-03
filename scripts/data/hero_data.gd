@@ -36,9 +36,15 @@ const MAX_SKILLS := 3
 @export var outline_color := Color.BLACK
 @export var accent_color := Color.WHITE
 @export var letter: String = ""
-## Real art. Setting either replaces the placeholder with no code change.
+## Real art. Setting either replaces the placeholder with no code change. Leaving both
+## empty also picks up art/heroes/<id>.png if that file exists; see ArtLibrary.
 @export var sprite: Texture2D
 @export var sprite_frames: SpriteFrames
+## The art is scaled so its longest side is this many pixels, so an image of any size
+## drops in at a sensible size. The hero's body is 56 px across. Set 0 to use the
+## image's own pixel size instead.
+@export_range(0.0, 400.0, 1.0, "suffix:px") var art_fit_px: float = 72.0
+## Extra multiplier applied after the fit above.
 @export var art_scale: float = 1.0
 @export var art_rotates_with_facing := false
 

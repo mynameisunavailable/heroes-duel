@@ -60,6 +60,20 @@ godot --headless --path . -s res://tools/ai_batch.gd -- --matches=20
 Plays AI-vs-AI matches and reports win rates, round lengths and damage. See
 "Measured balance" in [docs/PLAN.md](docs/PLAN.md) for the current readings.
 
+## Changing the pictures
+
+Drop an image into `art/heroes/`, `art/skills/` or `art/arena/`, named after the thing
+it belongs to — `art/heroes/knight.png` becomes the Knight. Then let Godot import it,
+either by opening the editor or by running:
+
+```bash
+godot --headless --path . --import
+```
+
+No code or resource files to edit, and anything missing falls back to the placeholder
+shape. Hero art is auto-scaled to fit. See [art/README.md](art/README.md) for the ids,
+the supported formats, and how to assign a picture explicitly or animate a hero instead.
+
 ## Try it on a phone (no Apple account needed)
 
 Export for the web and serve it on your Wi-Fi:

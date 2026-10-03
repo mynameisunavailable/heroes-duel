@@ -19,23 +19,35 @@ func setup(p_hero: HeroState, p_team_color: Color, darken: bool, p_show_pips: bo
 	show_pips = p_show_pips
 	var data := hero.data
 	var placeholder := $Body as PlaceholderBody
+	# A picture from the hero's data, or one dropped in art/heroes/<id>.png.
+	var texture := ArtLibrary.hero_texture(data)
+	var fit_texture: Texture2D = texture
 	if data.sprite_frames != null:
 		var anim := AnimatedSprite2D.new()
 		anim.sprite_frames = data.sprite_frames
 		if data.sprite_frames.has_animation(&"idle"):
 			anim.play(&"idle")
+		fit_texture = _first_frame(data.sprite_frames)
 		_replace_body(placeholder, anim)
-	elif data.sprite != null:
+	elif texture != null:
 		var sprite := Sprite2D.new()
-		sprite.texture = data.sprite
+		sprite.texture = texture
 		_replace_body(placeholder, sprite)
 	else:
 		placeholder.setup(data, darken)
 		_body = placeholder
+		fit_texture = null
 	if darken and not (_body is PlaceholderBody):
 		_body.modulate = Color(0.85, 0.85, 0.85)
-	_body.scale = Vector2.ONE * data.art_scale
+	_body.scale = Vector2.ONE * ArtLibrary.fit_scale(fit_texture, data.art_fit_px, data.art_scale)
 	position = hero.pos
+
+
+static func _first_frame(frames: SpriteFrames) -> Texture2D:
+	for animation in frames.get_animation_names():
+		if frames.get_frame_count(animation) > 0:
+			return frames.get_frame_texture(animation, 0)
+	return null
 
 
 func _replace_body(old: Node2D, new_body: Node2D) -> void:

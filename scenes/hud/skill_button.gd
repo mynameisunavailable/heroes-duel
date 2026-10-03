@@ -26,6 +26,7 @@ var skill: SkillData
 var cancel_centre := Vector2.ZERO
 var cancel_radius := 0.0
 
+var _icon: Texture2D
 var _touch_index := -1
 var _drag_pos := Vector2.ZERO
 var _dragging := false
@@ -38,6 +39,8 @@ var _tween: Tween
 func setup(p_slot: int, p_skill: SkillData) -> void:
 	slot = p_slot
 	skill = p_skill
+	# An icon from the skill's data, or one dropped in art/skills/<id>.png.
+	_icon = ArtLibrary.skill_icon(p_skill)
 	queue_redraw()
 
 
@@ -159,8 +162,8 @@ func _draw() -> void:
 	var r := size.x * 0.5
 	if _deny_left > 0.0:
 		c.x += sin(_deny_left * 90.0) * 8.0 * (_deny_left / DENY_TIME_S)
-	if skill.icon != null:
-		draw_texture_rect(skill.icon, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
+	if _icon != null:
+		draw_texture_rect(_icon, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
 	else:
 		var disc := skill.telegraph_color
 		disc.a = 0.9

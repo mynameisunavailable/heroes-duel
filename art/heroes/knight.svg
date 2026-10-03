@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Sample hero art, to show the drop-in works. Delete it or replace it with your own
+       picture; the Knight falls back to his blue square whenever this file is gone. -->
+  <circle cx="64" cy="64" r="46" fill="#3B82F6" stroke="#1D3A8A" stroke-width="7"/>
+  <path d="M64 26 L82 44 L82 78 L64 96 L46 78 L46 44 Z" fill="#DCE9FF" stroke="#1D3A8A" stroke-width="4"/>
+  <path d="M86 58 L112 64 L86 70 Z" fill="#F8FAFF" stroke="#1D3A8A" stroke-width="3"/>
+  <circle cx="64" cy="58" r="7" fill="#1D3A8A"/>
+</svg>

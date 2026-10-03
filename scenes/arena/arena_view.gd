@@ -14,8 +14,10 @@ func setup(p_arena: ArenaData) -> void:
 func _draw() -> void:
 	if arena == null or arena.polygon.size() < 3:
 		return
-	if arena.floor_texture != null:
-		draw_texture_rect(arena.floor_texture, Rect2(Vector2.ZERO, arena.size), false)
+	# A floor image from the arena's data, or one dropped in art/arena/<id>.png.
+	var floor_texture := ArtLibrary.arena_floor(arena)
+	if floor_texture != null:
+		draw_texture_rect(floor_texture, Rect2(Vector2.ZERO, arena.size), false)
 	else:
 		draw_colored_polygon(arena.polygon, arena.floor_color)
 	var outline := arena.polygon.duplicate()
