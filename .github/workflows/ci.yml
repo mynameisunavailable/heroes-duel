@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: 4.7.2-stable
+
+jobs:
+  test:
+    name: Validate and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache the Godot binary
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Download Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p ~/godot && cd ~/godot
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}"
+          asset="Godot_v${GODOT_VERSION}_linux.x86_64"
+          curl -fsSL -O "${base}/${asset}.zip"
+          curl -fsSL -o SHA512-SUMS.txt "${base}/SHA512-SUMS.txt"
+          grep " ${asset}.zip\$" SHA512-SUMS.txt | sha512sum --check --strict
+          unzip -q "${asset}.zip"
+          mv "${asset}" godot
+          chmod +x godot
+
+      - name: Add Godot to PATH
+        run: echo "$HOME/godot" >> "$GITHUB_PATH"
+
+      # Builds .godot/: the import cache, UID cache and the global class-name cache.
+      # Without it, class_name lookups fail on a fresh clone.
+      - name: Import project
+        run: godot --headless --path . --import
+
+      - name: Check every script parses
+        run: |
+          set -euo pipefail
+          status=0
+          while IFS= read -r script; do
+            if ! godot --headless --path . --check-only -s "res://${script#./}" >/dev/null 2>&1; then
+              echo "::error file=${script#./}::script failed to parse"
+              status=1
+            fi
+          done < <(find scripts scenes tools -name '*.gd')
+          exit $status
+
+      - name: Smoke test
+        run: godot --headless --path . -s res://tools/smoke_test.gd
+
+      - name: Unit tests
+        run: |
+          godot --headless --path . -s addons/gut/gut_cmdln.gd \
+            -gdir=res://tests/unit -ginclude_subdirs -gexit \
+            -gjunit_xml_file=res://reports/junit.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit
+          path: reports/junit.xml
+          if-no-files-found: ignore

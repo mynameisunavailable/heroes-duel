@@ -1,0 +1,89 @@
+name: iOS build spike
+
+# Manual only: macOS runners are billed at a much higher rate than Linux ones, so this
+# should not fire on every push.
+#
+# UNVERIFIED. This workflow has never been run. It is the milestone M3 starting point,
+# written from the Godot and Apple documentation, not from a green build. Expect to
+# iterate on it the first time. What it proves when it passes: Godot can export the
+# Xcode project and Xcode can compile it. It does not sign, archive or upload anything.
+#
+# Prerequisite: an "iOS" export preset committed in export_presets.cfg. Godot's iOS
+# exporter refuses to run without a bundle identifier and a 10-character team ID, so
+# create the preset once in the editor (Project > Export > Add > iOS), fill those in,
+# and commit the file. Signing credentials live in .godot/export_credentials.cfg, which
+# is gitignored and must never be committed.
+
+on:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: 4.7.2-stable
+  EXPORT_PRESET: iOS
+
+jobs:
+  build:
+    name: Export and compile for iOS
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require an iOS export preset
+        run: |
+          if ! grep -q 'platform="iOS"' export_presets.cfg 2>/dev/null; then
+            echo "::error::No iOS preset in export_presets.cfg. See the comment at the top of this workflow."
+            exit 1
+          fi
+
+      - name: Show the selected Xcode
+        run: xcodebuild -version
+
+      - name: Cache Godot and its export templates
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/godot
+            ~/Library/Application Support/Godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-macos-ios
+
+      - name: Install Godot and the iOS export template
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}"
+          mkdir -p ~/godot && cd ~/godot
+          curl -fsSL -O "${base}/Godot_v${GODOT_VERSION}_macos.universal.zip"
+          unzip -q "Godot_v${GODOT_VERSION}_macos.universal.zip"
+          # The templates archive is about 1.3 GB; the cache above keeps it to one download.
+          curl -fsSL -O "${base}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          target="$HOME/Library/Application Support/Godot/export_templates/${GODOT_VERSION/-/.}"
+          mkdir -p "$target"
+          unzip -q -j "Godot_v${GODOT_VERSION}_export_templates.tpz" -d "$target"
+
+      - name: Add Godot to PATH
+        run: echo "$HOME/godot/Godot.app/Contents/MacOS" >> "$GITHUB_PATH"
+
+      - name: Import project
+        run: Godot --headless --path . --import
+
+      - name: Export the Xcode project
+        run: |
+          set -euo pipefail
+          mkdir -p build/ios
+          Godot --headless --path . --export-release "$EXPORT_PRESET" build/ios/HeroesDuel.xcodeproj
+          ls -la build/ios
+
+      # Unsigned: this spike only proves the generated project compiles. Archiving and
+      # uploading to TestFlight need a real team ID and an App Store Connect API key.
+      - name: Compile unsigned
+        run: |
+          set -euo pipefail
+          cd build/ios
+          xcodebuild build \
+            -project HeroesDuel.xcodeproj \
+            -scheme HeroesDuel \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
