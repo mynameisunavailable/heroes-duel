@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/skill_data.gd" id="1_skill"]
+[ext_resource type="Script" path="res://scripts/data/effects/effect_data.gd" id="2_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/dash_effect.gd" id="3_dash"]
+[ext_resource type="Script" path="res://scripts/data/effects/damage_effect.gd" id="4_damage"]
+[ext_resource type="Script" path="res://scripts/data/effects/stun_effect.gd" id="5_stun"]
+
+[sub_resource type="Resource" id="Resource_damage"]
+script = ExtResource("4_damage")
+amount = 60
+
+[sub_resource type="Resource" id="Resource_stun"]
+script = ExtResource("5_stun")
+duration_s = 0.8
+
+[sub_resource type="Resource" id="Resource_dash"]
+script = ExtResource("3_dash")
+distance_px = 300.0
+speed_px_s = 1000.0
+width_px = 56.0
+mode = 0
+payload = Array[ExtResource("2_effect")]([SubResource("Resource_damage"), SubResource("Resource_stun")])
+
+[resource]
+script = ExtResource("1_skill")
+id = "shield_charge"
+display_name = "Shield Charge"
+abbrev = "SC"
+description = "Brace 0.15 s, then charge up to 300 px. The first enemy hit takes 60 damage and is stunned for 0.8 s."
+cooldown_s = 10.0
+cast_time_s = 0.15
+targeting = 0
+quick_aim = 0
+range_px = 300.0
+radius_or_width_px = 56.0
+telegraph_color = Color(0.2314, 0.5098, 0.9647, 0.6)
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_dash")])

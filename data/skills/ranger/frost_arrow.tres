@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/skill_data.gd" id="1_skill"]
+[ext_resource type="Script" path="res://scripts/data/effects/effect_data.gd" id="2_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/damage_effect.gd" id="3_damage"]
+[ext_resource type="Script" path="res://scripts/data/effects/slow_effect.gd" id="4_slow"]
+[ext_resource type="Script" path="res://scripts/data/effects/projectile_effect.gd" id="5_projectile"]
+
+[sub_resource type="Resource" id="Resource_damage"]
+script = ExtResource("3_damage")
+amount = 40
+
+[sub_resource type="Resource" id="Resource_slow"]
+script = ExtResource("4_slow")
+pct = 0.4
+duration_s = 2.0
+
+[sub_resource type="Resource" id="Resource_projectile"]
+script = ExtResource("5_projectile")
+speed_px_s = 800.0
+radius_px = 15.0
+max_range_px = 650.0
+homing = false
+payload = Array[ExtResource("2_effect")]([SubResource("Resource_damage"), SubResource("Resource_slow")])
+color = Color(0.6, 0.85, 1, 1)
+
+[resource]
+script = ExtResource("1_skill")
+id = "frost_arrow"
+display_name = "Frost Arrow"
+abbrev = "FA"
+description = "Snap shot (0.1 s): 40 damage and a 40% slow for 2 s."
+cooldown_s = 7.0
+cast_time_s = 0.1
+targeting = 0
+quick_aim = 0
+range_px = 650.0
+radius_or_width_px = 30.0
+telegraph_color = Color(0.6, 0.85, 1, 0.6)
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_projectile")])

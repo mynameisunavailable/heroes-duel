@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/hero/hero_view.gd" id="1_view"]
+[ext_resource type="Script" path="res://scenes/hero/placeholder_body.gd" id="2_body"]
+
+[node name="HeroView" type="Node2D"]
+script = ExtResource("1_view")
+
+[node name="Body" type="Node2D" parent="."]
+script = ExtResource("2_body")

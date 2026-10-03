@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/hud/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scenes/hud/floating_joystick.gd" id="2_joy"]
+[ext_resource type="Script" path="res://scenes/hud/hp_bar.gd" id="3_bar"]
+[ext_resource type="Script" path="res://scenes/hud/attack_button.gd" id="4_atk"]
+
+[node name="Hud" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="JoystickZone" type="Control" parent="."]
+script = ExtResource("2_joy")
+
+[node name="SafeArea" type="Control" parent="."]
+mouse_filter = 2
+
+[node name="P1Bar" type="Control" parent="SafeArea"]
+mouse_filter = 2
+script = ExtResource("3_bar")
+
+[node name="P2Bar" type="Control" parent="SafeArea"]
+mouse_filter = 2
+script = ExtResource("3_bar")
+mirrored = true
+
+[node name="TimerLabel" type="Label" parent="SafeArea"]
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BannerLabel" type="Label" parent="SafeArea"]
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PauseButton" type="Button" parent="SafeArea"]
+focus_mode = 0
+text = "II"
+
+[node name="ActionCluster" type="Control" parent="SafeArea"]
+mouse_filter = 2
+
+[node name="AttackButton" type="Control" parent="SafeArea/ActionCluster"]
+script = ExtResource("4_atk")

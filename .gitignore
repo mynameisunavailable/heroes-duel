@@ -1,0 +1,13 @@
+# Godot 4 cache and generated platform folders
+.godot/
+/android/
+
+# Build output, validation logs and test reports
+/build/
+/export/
+/reports/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.tmp

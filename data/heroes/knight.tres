@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="HeroData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/hero_data.gd" id="1_hero"]
+[ext_resource type="Script" path="res://scripts/data/skill_data.gd" id="2_skill"]
+[ext_resource type="Script" path="res://scripts/data/ai_profile.gd" id="3_ai"]
+[ext_resource type="Resource" path="res://data/skills/knight/shield_charge.tres" id="4_charge"]
+[ext_resource type="Resource" path="res://data/skills/knight/cleave.tres" id="5_cleave"]
+
+[sub_resource type="Resource" id="Resource_ai"]
+script = ExtResource("3_ai")
+move_style = 0
+preferred_min_px = 0.0
+preferred_max_px = 55.0
+retreat_below_px = 0.0
+
+[resource]
+script = ExtResource("1_hero")
+id = "knight"
+display_name = "Garrick"
+archetype = "Melee Bruiser"
+max_hp = 1240
+move_speed = 300.0
+attack_type = 0
+attack_damage = 49
+attack_range = 95.0
+attack_interval_s = 1.0
+attack_windup_s = 0.15
+projectile_speed = 0.0
+projectile_radius = 0.0
+skills = Array[ExtResource("2_skill")]([ExtResource("4_charge"), ExtResource("5_cleave")])
+placeholder_shape = 0
+color = Color(0.2314, 0.5098, 0.9647, 1)
+outline_color = Color(0.1176, 0.2275, 0.5412, 1)
+accent_color = Color(1, 1, 1, 1)
+letter = "G"
+ai_profile = SubResource("Resource_ai")

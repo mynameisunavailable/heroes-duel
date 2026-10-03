@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="HeroRoster" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/hero_roster.gd" id="1_roster"]
+[ext_resource type="Script" path="res://scripts/data/hero_data.gd" id="2_hero"]
+[ext_resource type="Resource" path="res://data/heroes/knight.tres" id="3_knight"]
+[ext_resource type="Resource" path="res://data/heroes/ranger.tres" id="4_ranger"]
+
+[resource]
+script = ExtResource("1_roster")
+heroes = Array[ExtResource("2_hero")]([ExtResource("3_knight"), ExtResource("4_ranger")])

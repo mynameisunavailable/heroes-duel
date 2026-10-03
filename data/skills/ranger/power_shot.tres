@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/skill_data.gd" id="1_skill"]
+[ext_resource type="Script" path="res://scripts/data/effects/effect_data.gd" id="2_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/damage_effect.gd" id="3_damage"]
+[ext_resource type="Script" path="res://scripts/data/effects/projectile_effect.gd" id="4_projectile"]
+
+[sub_resource type="Resource" id="Resource_damage"]
+script = ExtResource("3_damage")
+amount = 120
+
+[sub_resource type="Resource" id="Resource_projectile"]
+script = ExtResource("4_projectile")
+speed_px_s = 1100.0
+radius_px = 18.0
+max_range_px = 800.0
+homing = false
+payload = Array[ExtResource("2_effect")]([SubResource("Resource_damage")])
+color = Color(0.85, 1, 0.85, 1)
+
+[resource]
+script = ExtResource("1_skill")
+id = "power_shot"
+display_name = "Power Shot"
+abbrev = "PS"
+description = "Draw 0.35 s, then loose a fast arrow (800 px range) dealing 120 damage to the first enemy hit."
+cooldown_s = 8.0
+cast_time_s = 0.35
+targeting = 0
+quick_aim = 0
+range_px = 800.0
+radius_or_width_px = 36.0
+telegraph_color = Color(0.85, 1, 0.85, 0.6)
+effects = Array[ExtResource("2_effect")]([SubResource("Resource_projectile")])
