@@ -8,4 +8,4 @@ func _ready() -> void:
 		print("Heroes Duel: dedicated server mode is planned for milestone M6.")
 		get_tree().quit(0)
 		return
-	Game.start_match.call_deferred(Game.next_match)
+	Game.start_hero_select.call_deferred()

@@ -57,6 +57,7 @@ func _ready() -> void:
 	hud.pause_requested.connect(_set_paused.bind(true))
 	hud.resume_requested.connect(_set_paused.bind(false))
 	hud.restart_requested.connect(_restart)
+	hud.change_hero_requested.connect(Game.start_hero_select)
 	runner.sim_event.connect(hud.on_sim_event)
 	runner.sim_event.connect(damage_numbers.on_sim_event)
 

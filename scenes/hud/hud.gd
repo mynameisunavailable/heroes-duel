@@ -12,6 +12,7 @@ signal aim_preview_changed(slot: int, pad: Vector2, active: bool)
 signal pause_requested
 signal resume_requested
 signal restart_requested
+signal change_hero_requested
 
 ## Skill-button angles around the attack button, in degrees (180 = left, 270 = up).
 const SKILL_ANGLES_2 := [195.0, 255.0]
@@ -58,8 +59,12 @@ func setup(state: MatchState, local_index: int) -> void:
 	_build_cancel_disc()
 	_build_skill_buttons(me.data.skills)
 	_pause_overlay = _build_overlay(tr("PAUSED"), [
-		[tr("Resume"), resume_requested.emit], [tr("Restart"), restart_requested.emit]])
-	_result_overlay = _build_overlay("", [[tr("Rematch"), restart_requested.emit]])
+		[tr("Resume"), resume_requested.emit],
+		[tr("Restart"), restart_requested.emit],
+		[tr("Change hero"), change_hero_requested.emit]])
+	_result_overlay = _build_overlay("", [
+		[tr("Rematch"), restart_requested.emit],
+		[tr("Change hero"), change_hero_requested.emit]])
 	_result_label = _result_overlay.get_meta("title") as Label
 
 	joystick.vector_changed.connect(move_input_changed.emit)

@@ -8,16 +8,21 @@ extends SceneTree
 ##   --drag     skill slot to press and drag, to capture the aim indicator
 ##   --drag-to  "x,y" in viewport pixels to drag towards (default the arena centre)
 ##   --keys     physical keys to hold down, e.g. --keys=D,J, to check the bindings work
+##   --scene    scene to open (default the arena), e.g. --scene=res://scenes/ui/hero_select.tscn
+##   --click    "x,y" in viewport pixels to click once, a few frames before the capture
 
 var _capture_at := PackedInt32Array([140, 420])
 var _out_dir := "build"
 var _drag_slot := -1
 var _drag_to := Vector2(560.0, 300.0)
 var _hold_keys: Array[int] = []
+var _scene := "res://scenes/arena/arena.tscn"
+var _click_at := Vector2.INF
 var _frame := 0
 var _taken := 0
 var _drag_started := false
 var _keys_held := false
+var _clicked := false
 var _touch_index := 7
 
 
@@ -35,6 +40,12 @@ func _initialize() -> void:
 			var parts := arg.trim_prefix("--drag-to=").split(",", false)
 			if parts.size() == 2:
 				_drag_to = Vector2(parts[0].to_float(), parts[1].to_float())
+		elif arg.begins_with("--scene="):
+			_scene = arg.trim_prefix("--scene=")
+		elif arg.begins_with("--click="):
+			var at := arg.trim_prefix("--click=").split(",", false)
+			if at.size() == 2:
+				_click_at = Vector2(at[0].to_float(), at[1].to_float())
 		elif arg.begins_with("--keys="):
 			for name in arg.trim_prefix("--keys=").split(",", false):
 				var keycode := OS.find_keycode_from_string(name.strip_edges())
@@ -43,12 +54,13 @@ func _initialize() -> void:
 				else:
 					printerr("Unknown key: %s" % name)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://%s" % _out_dir))
-	change_scene_to_file("res://scenes/arena/arena.tscn")
+	change_scene_to_file(_scene)
 
 
 func _process(_delta: float) -> bool:
 	_frame += 1
 	_hold_down_keys()
+	_drive_click()
 	_drive_drag()
 	if not _capture_at.has(_frame):
 		return false
@@ -61,6 +73,22 @@ func _process(_delta: float) -> bool:
 	print("saved %s (%dx%d)" % [path, image.get_width(), image.get_height()])
 	_taken += 1
 	return _taken >= _capture_at.size()
+
+
+## Clicks once, shortly before the first capture, to exercise a menu button.
+func _drive_click() -> void:
+	if _clicked or _click_at == Vector2.INF or _capture_at.is_empty():
+		return
+	if _frame < _capture_at[0] - 20:
+		return
+	_clicked = true
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.position = _click_at
+		event.global_position = _click_at
+		event.pressed = pressed
+		Input.parse_input_event(event)
 
 
 ## Presses the requested keys once, shortly before the first capture, and never releases

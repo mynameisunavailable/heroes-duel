@@ -3,6 +3,7 @@ extends Node
 
 const ROSTER_PATH := "res://data/roster.tres"
 const ARENA_SCENE := "res://scenes/arena/arena.tscn"
+const HERO_SELECT_SCENE := "res://scenes/ui/hero_select.tscn"
 
 var roster: HeroRoster
 var next_match: MatchConfig
@@ -20,6 +21,10 @@ func _ready() -> void:
 func start_match(config: MatchConfig) -> void:
 	next_match = config
 	get_tree().change_scene_to_file(ARENA_SCENE)
+
+
+func start_hero_select() -> void:
+	get_tree().change_scene_to_file(HERO_SELECT_SCENE)
 
 
 func _unhandled_input(event: InputEvent) -> void:
