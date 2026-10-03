@@ -46,18 +46,6 @@ jobs:
       - name: Import project
         run: godot --headless --path . --import
 
-      - name: Check every script parses
-        run: |
-          set -euo pipefail
-          status=0
-          while IFS= read -r script; do
-            if ! godot --headless --path . --check-only -s "res://${script#./}" >/dev/null 2>&1; then
-              echo "::error file=${script#./}::script failed to parse"
-              status=1
-            fi
-          done < <(find scripts scenes tools -name '*.gd')
-          exit $status
-
       - name: Smoke test
         run: godot --headless --path . -s res://tools/smoke_test.gd
 
@@ -66,6 +54,20 @@ jobs:
           godot --headless --path . -s addons/gut/gut_cmdln.gd \
             -gdir=res://tests/unit -ginclude_subdirs -gexit \
             -gjunit_xml_file=res://reports/junit.xml
+
+      # Boots the real game, which compiles every script that the running game touches,
+      # with the autoloads in place. Checking scripts one at a time with --check-only
+      # cannot replace this: a script that refers to an autoload singleton fails to
+      # compile on its own, because autoloads only exist once a SceneTree is running.
+      - name: Boot the game
+        run: |
+          set -euo pipefail
+          godot --headless --path . --quit-after 300 2>&1 | tee boot.log
+          if grep -qE 'SCRIPT ERROR|Parse Error|ERROR:' boot.log; then
+            echo "::error::errors reported while booting"
+            grep -nE 'SCRIPT ERROR|Parse Error|ERROR:' boot.log | head -20
+            exit 1
+          fi
 
       - name: Upload test report
         if: always()
