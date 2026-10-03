@@ -60,6 +60,26 @@ godot --headless --path . -s res://tools/ai_batch.gd -- --matches=20
 Plays AI-vs-AI matches and reports win rates, round lengths and damage. See
 "Measured balance" in [docs/PLAN.md](docs/PLAN.md) for the current readings.
 
+## Try it on a phone (no Apple account needed)
+
+Export for the web and serve it on your Wi-Fi:
+
+```bash
+godot --headless --path . --export-release Web build/web/index.html
+```
+
+```bash
+python tools/serve_web.py
+```
+
+Open the `http://<your-pc-ip>:8060/` address it prints on the phone, with the phone on
+the same network. Windows will ask to allow Python through the firewall; allow it on
+Private networks only.
+
+Good for checking layout, thumb reach and multitouch early. Not a substitute for a real
+iOS build: the browser's own bars change the safe area, the web vibration API is not
+iOS haptics, and the single-threaded WebGL build does not represent native speed.
+
 ## Screenshots
 
 `tools/screenshot.gd` captures PNGs of the running game, so a change can be checked
