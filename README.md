@@ -3,6 +3,12 @@
 A 1v1 real-time, top-down hero duel for phones, built with Godot 4.7.2 (GDScript).
 See [docs/PLAN.md](docs/PLAN.md) for the design, milestones and iOS shipping plan.
 
+## Play it
+
+Download a build from the [latest release](https://github.com/mynameisunavailable/heroes-duel/releases/latest).
+Nothing to install. Windows shows a "Windows protected your PC" warning the first time,
+because the build is not code-signed: click **More info**, then **Run anyway**.
+
 ## Run
 
 ```bash
